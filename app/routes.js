@@ -101,6 +101,31 @@ module.exports = function(app) {
 		});
 	});
 
+	app.post('/addposition', function(req, res) {
+		var userAuth = req.body.authen;
+		var position = req.body.position;
+		User.findOne({'authen.site': userAuth.site, 'authen.id': userAuth.id, 'isTutor': true}, function(err, user) {
+			if (err) {
+				res.send('go_error');
+				console.log('err');
+				throw err;
+			}
+			if (!user) {
+				res.send('go_regis');
+			}
+			else {
+				user.position.push(position);
+				user.save(function(err) {
+					if (err) {
+						res.send('go_error');
+						throw err;
+					}
+					res.send('success');
+				});
+			}
+		});
+	});
+
 	app.get('/getsubjectdata', function(req, res) {
 		res.json(infoConfig)
 	});
@@ -142,6 +167,11 @@ module.exports = function(app) {
 		var search = req.body.search;
 		var pattern = new RegExp(search, 'i');
 		User.find({'isTutor': true}, '_id firstname lastname pic_profile teach_subjects', function(err, teachers) {
+			if (err) {
+				console.log('err');
+				res.send('go_error');
+				throw err;
+			}
 			res.json(teachers.filter(function(t) {
 				return pattern.test(t.firstname + ' ' + t.lastname);
 			}));
