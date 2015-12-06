@@ -148,19 +148,10 @@ module.exports = function(app) {
 		});
 	});
 
-	// data -> {search: 'map'}, authen
-	app.post('/search', isLoggedIn, function(req, res) {
-		var search = req.body.search;
-		if (search == 'map') {
-		}
-		else if (search == 'lesson') {
-		}
-		else if (search == 'teacher') {
-		}
-		else {
-			console.log('error');
-			res.send('go_error');
-		}
+	app.get('/searchbymap', function(req, res) {
+		User.find({'isTutor': true}, '_id firstname lastname pic_profile teach_subjects position', function(err, teachers) {
+			res.json(teachers);
+		});
 	});
 
 	app.post('/searchbyteacher', function(req, res) {
