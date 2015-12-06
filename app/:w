@@ -169,24 +169,23 @@ module.exports = function(app) {
 		});
 	});
 
-	app.post('/searchbysubject', function(req, res) {
-		var subject = new RegExp(req.body.subject, 'i');
+	// map and reduce buggg
+	app.get('/searchbysubject/:subject/:level', function(req, res) {
+		var subject = new RegExp(req.params.subject, 'i');
 		if (req.params.level == 'all') req.params.level = '';
-		var level = new RegExp(req.body.level, 'i');
+		var level = new RegExp(req.params.level, 'i');
 		console.log(subject);
-		User.find({'isTutor': true, 'teach_subjects.subject': subject, 'teach_subjects.level': level}
-			, '_id firstname lastname pic_profile teach_subjects.subject teach_subjects.level', function(err, teachers) {
-			var res_teachers = [];
+		User.find({'isTutor': true, '_id firstname lastname pic_profile teach_subjects.subject teach_subjects.level': subject}
+			, 'teach_subjects', function(err, teachers) {
 			teachers.forEach(function(teacher) {
-				var check_subject_and_level = false;
-				teacher.teach_subjects = teacher.teach_subjects.filter(function(teach_subject) {
+				teacher.teach_subjects.filter(function(teach_subject) {
 					return subject.test(teach_subject.subject) && level.test(teach_subject.level);
 				});
-				res_teachers.push(teacher);
-			})
-			res.json(res_teachers);
+			});
+			res.json(teachers);
 		});	
 	});
+	// buggg
 }
 
 function isLoggedIn(req, res, next) {
