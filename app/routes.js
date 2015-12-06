@@ -123,6 +123,7 @@ module.exports = function(app) {
 		});
 	});
 
+	// data -> {search: 'map'}, authen
 	app.post('/search', isLoggedIn, function(req, res) {
 		var search = req.body.search;
 		if (search == 'map') {
@@ -137,8 +138,13 @@ module.exports = function(app) {
 		}
 	});
 
-	app.get('/searchbyteacher', function(req, res) {
-		User.find({'isTutor': true}, '_id firstname lastname pic_profile teach_subjects', function() {
+	app.post('/searchbyteacher', function(req, res) {
+		var search = req.body.search;
+		var pattern = new RegExp(search, 'i');
+		User.find({'isTutor': true}, '_id firstname lastname pic_profile teach_subjects', function(err, teachers) {
+			res.json(teachers.filter(function(t) {
+				return pattern.test(t.firstname + ' ' + t.lastname);
+			}));
 		});
 	});
 }
@@ -147,9 +153,6 @@ function searchByMap() {
 }
 
 function searchByLesson() {
-}
-
-function searchByTeacher() {
 }
 
 function isLoggedIn(req, res, next) {
