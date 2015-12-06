@@ -148,7 +148,7 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get('/searchbymap', function(req, res) {
+	app.post('/searchbymap', function(req, res) {
 		User.find({'isTutor': true}, '_id firstname lastname pic_profile teach_subjects position', function(err, teachers) {
 			res.json(teachers);
 		});
@@ -168,6 +168,8 @@ module.exports = function(app) {
 			}));
 		});
 	});
+
+
 }
 
 function searchByMap() {
