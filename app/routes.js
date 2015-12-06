@@ -173,7 +173,6 @@ module.exports = function(app) {
 		var subject = new RegExp(req.body.subject, 'i');
 		if (req.params.level == 'all') req.params.level = '';
 		var level = new RegExp(req.body.level, 'i');
-		console.log(subject);
 		User.find({'isTutor': true, 'teach_subjects.subject': subject, 'teach_subjects.level': level}
 			, '_id firstname lastname pic_profile teach_subjects.subject teach_subjects.level', function(err, teachers) {
 			var res_teachers = [];
